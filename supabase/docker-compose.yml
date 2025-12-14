@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: supabase/postgres:15.1.1.78
+    container_name: supabase_db_local
+    restart: unless-stopped
+    command:
+      - postgres
+      - -c
+      - max_connections=200
+      - -c
+      - shared_preload_libraries=pgextwlist,pg_stat_statements,pg_net,pgsodium,plpgsql
+      - -c
+      - log_replication_commands=on
+      - -c
+      - log_statement=all
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_INITDB_ARGS: --lc-ctype=C --lc-collate=C
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_EXTRA_SEARCH_PATH: extensions
+      PGDATA: /var/lib/postgresql/data
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+    ports:
+      - '54322:5432'
+    networks:
+      - supabase
+
+  vector:
+    image: timberio/vector:0.28.1-debian
+    container_name: supabase_vector_local
+    volumes:
+      - ./volumes/logs/vector.yml:/etc/vector/vector.yml:ro
+      - ${PWD}/volumes/logs:/var/log/supabase
+    command: /etc/vector/vector.yml
+    ports:
+      - '54324:8686'
+    networks:
+      - supabase
+    profiles:
+      - 'debug'
+
+  studio:
+    image: supabase/studio:20231211-5cc84b2
+    container_name: supabase_studio_local
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      SUPABASE_URL: http://kong:8000
+      SUPABASE_PUBLIC_URL: http://localhost:54321
+      SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      LOGFLARE_API_KEY: ${LOGFLARE_API_KEY:-}
+      LOGFLARE_URL: http://vector:8686
+      NEXT_PUBLIC_ENABLE_LOGS: 'true'
+    ports:
+      - '54323:3000'
+    networks:
+      - supabase
+    depends_on:
+      - kong
+
+  kong:
+    image: kong:3.4.1
+    container_name: supabase_kong_local
+    restart: unless-stopped
+    environment:
+      KONG_DECLARATIVE_CONFIG: /home/kong/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_DNS_ORDER: LAST,A,CNAME
+      KONG_PLUGINS: request-transformer,cors,key-auth,basic-auth
+      KONG_LOG_LEVEL: info
+    volumes:
+      - ./volumes/kong.yml:/home/kong/kong.yml:ro
+    ports:
+      - '54321:8000'
+      - '54320:8443'
+    networks:
+      - supabase
+    depends_on:
+      - postgres
+
+networks:
+  supabase:
+    driver: bridge
+    name: supabase
+
+volumes:
+  postgres:
+    driver: local

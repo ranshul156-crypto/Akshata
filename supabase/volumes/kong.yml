@@ -1,0 +1,76 @@
+_format_version: '1.1'
+
+upstream:
+  - name: auth
+    client_max_body_size: 256m
+    nodes:
+      - host: localhost
+        port: 54321
+  - name: rest
+    client_max_body_size: 256m
+    nodes:
+      - host: postgres
+        port: 3000
+  - name: realtime
+    client_max_body_size: 256m
+    nodes:
+      - host: localhost
+        port: 54321
+  - name: storage
+    client_max_body_size: 256m
+    nodes:
+      - host: localhost
+        port: 54321
+
+service:
+  - name: auth
+    url: http://localhost:9999
+    routes:
+      - name: auth-all
+        strip_path: true
+        paths:
+          - /auth/v1
+    plugins:
+      - name: cors
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - 'X-Identity-Id: $consumer_id'
+
+  - name: rest
+    url: http://postgres:3000
+    routes:
+      - name: rest-all
+        strip_path: true
+        paths:
+          - /rest/v1
+    plugins:
+      - name: cors
+      - name: request-transformer
+        config:
+          add:
+            headers:
+              - 'Authorization: Bearer $http_authorization'
+
+  - name: realtime
+    url: http://localhost:9999
+    routes:
+      - name: realtime-all
+        strip_path: true
+        paths:
+          - /realtime/v1
+    plugins:
+      - name: cors
+      - name: request-transformer
+
+  - name: storage
+    url: http://localhost:9999
+    routes:
+      - name: storage-all
+        strip_path: true
+        paths:
+          - /storage/v1
+    plugins:
+      - name: cors
+      - name: request-transformer
