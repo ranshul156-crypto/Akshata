@@ -1,0 +1,52 @@
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# IDE and Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.env.test
+
+# Supabase Local Development
+supabase/.branches/
+supabase/.temp/
+supabase/volumes/postgres/
+supabase/volumes/logs/
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS files
+Thumbs.db
+.AppleDouble
+.LSOverride
+
+# Temp files
+*.tmp
+.turbo

@@ -1,0 +1,32 @@
+# Supabase Local Development Configuration
+# Reference: https://supabase.com/docs/guides/local-development/cli/config
+
+[project]
+project_id = "local"
+region = "us-east-1"
+
+[api]
+port = 54321
+schemas = ["public", "graphql_public"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 15
+# Connection pooling configuration
+pooler_mode = "transaction"
+pooler_max_client_conn = 100
+
+[realtime]
+enabled = true
+max_message_payload_bytes = 200000
+
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["http://localhost:3000/auth/callback"]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+refresh_token_reuse_interval = 10
+enable_signup = true

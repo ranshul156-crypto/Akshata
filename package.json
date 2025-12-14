@@ -1,0 +1,40 @@
+{
+  "name": "cycle-tracker-backend",
+  "version": "1.0.0",
+  "description": "Menstrual cycle tracking application - Supabase backend",
+  "main": "index.js",
+  "scripts": {
+    "dev": "echo 'Frontend development setup not yet configured'",
+    "build": "echo 'Frontend build setup not yet configured'",
+    "supabase:start": "cd supabase && docker-compose up -d && sleep 30 && npm run supabase:migrate && npm run supabase:seed",
+    "supabase:stop": "cd supabase && docker-compose down",
+    "supabase:reset": "cd supabase && docker-compose down -v && npm run supabase:start",
+    "supabase:migrate": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/migrations/20240101000000_initial_schema.sql",
+    "supabase:seed": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/seed.sql",
+    "supabase:test": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/test_rls.sql",
+    "supabase:logs": "cd supabase && docker-compose logs -f",
+    "db:psql": "psql postgresql://postgres:postgres@localhost:54322/postgres"
+  },
+  "keywords": [
+    "supabase",
+    "postgresql",
+    "health-tracking",
+    "menstrual-cycle"
+  ],
+  "author": "Development Team",
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.38.0"
+  },
+  "devDependencies": {
+    "@supabase/cli": "^1.131.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "<repository-url>"
+  }
+}
