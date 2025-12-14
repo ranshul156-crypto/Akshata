@@ -4,8 +4,9 @@
   "description": "Menstrual cycle tracking application - Supabase backend",
   "main": "index.js",
   "scripts": {
-    "dev": "echo 'Frontend development setup not yet configured'",
-    "build": "echo 'Frontend build setup not yet configured'",
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build",
+    "start": "cd frontend && npm run preview",
     "supabase:start": "cd supabase && docker-compose up -d && sleep 30 && npm run supabase:migrate && npm run supabase:seed",
     "supabase:stop": "cd supabase && docker-compose down",
     "supabase:reset": "cd supabase && docker-compose down -v && npm run supabase:start",
@@ -13,7 +14,10 @@
     "supabase:seed": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/seed.sql",
     "supabase:test": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/test_rls.sql",
     "supabase:logs": "cd supabase && docker-compose logs -f",
-    "db:psql": "psql postgresql://postgres:postgres@localhost:54322/postgres"
+    "db:psql": "psql postgresql://postgres:postgres@localhost:54322/postgres",
+    "setup:frontend": "cd frontend && npm install",
+    "dev:full": "npm run supabase:start && npm run dev",
+    "build:full": "npm run supabase:migrate && cd frontend && npm run build"
   },
   "keywords": [
     "supabase",
