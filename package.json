@@ -9,11 +9,14 @@
     "supabase:start": "cd supabase && docker-compose up -d && sleep 30 && npm run supabase:migrate && npm run supabase:seed",
     "supabase:stop": "cd supabase && docker-compose down",
     "supabase:reset": "cd supabase && docker-compose down -v && npm run supabase:start",
-    "supabase:migrate": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/migrations/20240101000000_initial_schema.sql",
+    "supabase:migrate": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/migrations/20240101000000_initial_schema.sql && psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/migrations/20251215003230_update_reminder_types.sql && psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/migrations/20251215003231_add_prediction_scheduling.sql",
     "supabase:seed": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/seed.sql",
     "supabase:test": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/test_rls.sql",
+    "supabase:test:predictions": "psql postgresql://postgres:postgres@localhost:54322/postgres -f supabase/test_predictions.sql",
     "supabase:logs": "cd supabase && docker-compose logs -f",
-    "db:psql": "psql postgresql://postgres:postgres@localhost:54322/postgres"
+    "db:psql": "psql postgresql://postgres:postgres@localhost:54322/postgres",
+    "predict:run": "./scripts/run-predictions.sh",
+    "predict:test": "deno run --allow-read utils/prediction-algorithm.test.ts"
   },
   "keywords": [
     "supabase",

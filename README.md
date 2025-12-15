@@ -21,8 +21,15 @@ This application helps users track their menstrual cycles, predict future cycles
 
 - **Cycle Tracking**: Log daily period data with flow intensity and notes
 - **Symptom Logging**: Track mood, pain levels, sleep quality, and other symptoms
-- **Predictions**: AI-powered predictions for future cycle dates
+- **Predictions**: Deterministic predictions for future cycle dates and fertility windows
+  - Automatic prediction generation when cycle data changes
+  - Scheduled nightly updates via cron jobs
+  - Confidence scoring based on historical data quality
 - **Reminders**: Customizable notifications for cycle events
+  - Period start/end reminders
+  - Fertility window notifications
+  - Medication and hydration reminders
+  - Flexible scheduling with configurable time windows
 - **Chat Interface**: AI assistant for health-related questions
 - **Data Privacy**: Full row-level security (RLS) with complete data isolation
 
@@ -497,14 +504,49 @@ psql postgresql://postgres:postgres@localhost:54322/postgres -f migrations/20240
 psql postgresql://postgres:postgres@localhost:54322/postgres -f seed.sql
 ```
 
+## Predictions & Reminders
+
+The application includes a comprehensive prediction and reminders system:
+
+### Prediction Service
+
+- **Deterministic Algorithm**: Calculates next period dates and fertility windows based on historical data
+- **Automatic Updates**: Triggers when new cycle entries are added
+- **Scheduled Jobs**: Nightly prediction generation at 2 AM UTC via pg_cron
+- **Confidence Scoring**: 0.5-0.95 based on data quality and consistency
+
+### Managing Predictions
+
+```bash
+# Run predictions for all users
+make predict-run
+
+# Test prediction algorithm
+make predict-test
+
+# Run database prediction tests
+make db-test-predictions
+```
+
+### Reminders
+
+Users can configure reminders for:
+- Period start/end notifications
+- Fertility window alerts
+- Medication reminders
+- Hydration reminders
+
+For detailed documentation, see [docs/PREDICTION_REMINDERS.md](docs/PREDICTION_REMINDERS.md).
+
 ## Development Workflow
 
 1. **Start services**: `cd supabase && docker-compose up -d`
 2. **Make schema changes**: Edit migration files or create new ones
-3. **Apply migrations**: `psql ... -f migrations/new_migration.sql`
+3. **Apply migrations**: `make db-migrate`
 4. **Test via Studio**: Browse to http://localhost:54323
 5. **Test via CLI**: Use curl with auth token
-6. **Seed test data**: Load seed.sql if needed
+6. **Seed test data**: `make db-seed`
+7. **Run tests**: `make db-test` and `make db-test-predictions`
 
 ## Production Deployment
 
