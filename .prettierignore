@@ -1,0 +1,10 @@
+node_modules
+build
+dist
+supabase/volumes
+coverage
+
+# generated
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

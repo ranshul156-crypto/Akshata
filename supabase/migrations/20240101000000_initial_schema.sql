@@ -39,6 +39,11 @@ CREATE POLICY "Users can update their own account"
   USING (auth_id = auth.uid())
   WITH CHECK (auth_id = auth.uid());
 
+CREATE POLICY "Users can insert their own account"
+  ON public.user_accounts
+  FOR INSERT
+  WITH CHECK (auth_id = auth.uid());
+
 CREATE POLICY "Service role can manage all accounts"
   ON public.user_accounts
   FOR ALL
